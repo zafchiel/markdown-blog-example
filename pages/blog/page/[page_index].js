@@ -4,10 +4,11 @@ import Link from "next/link"
 import matter from "gray-matter"
 import Layout from "@/components/Layout"
 import Post from "@/components/Post"
+import Pagination from "@/components/Pagination"
 import { sortByDate } from "@/utils/index"
 import { POSTS_PER_PAGE } from "@/config"
 
-export default function BlogPage({ posts }) {
+export default function BlogPage({ posts, currentPage, numPages }) {
   return (
     <Layout>
       <h1 className="text-5xl border-b-4 p-5 font-bold">Blog</h1>
@@ -17,6 +18,8 @@ export default function BlogPage({ posts }) {
           <Post key={index} post={post} />
         ))}
       </div>
+
+      <Pagination currentPage={currentPage} numPages={numPages} />
     </Layout>
   )
 }
@@ -42,7 +45,9 @@ export async function getStaticPaths() {
   }
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+  const currentPage = parseInt((params && params.page_index) || 1)
+
   const files = fs.readdirSync(path.join("posts"))
 
   const posts = files.map((filename) => {
@@ -58,9 +63,17 @@ export async function getStaticProps() {
     }
   })
 
+  const numPages = Math.ceil(posts.length / POSTS_PER_PAGE)
+  const pageIndex = currentPage - 1
+  const orderedPosts = posts
+    .sort(sortByDate)
+    .slice(pageIndex * POSTS_PER_PAGE, (pageIndex + 1) * POSTS_PER_PAGE)
+
   return {
     props: {
-      posts: posts.sort(sortByDate),
+      posts: orderedPosts,
+      currentPage,
+      numPages,
     },
   }
 }
