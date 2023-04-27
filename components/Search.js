@@ -1,9 +1,26 @@
 import { useState, useEffect } from "react"
+import axios from "axios"
 import { FaSearch } from "react-icons/fa"
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("")
   const [searchResults, setSearchResults] = useState([])
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      setSearchResults([])
+    } else {
+      const searchFetch = async () => {
+        const res = await axios.get(`/api/search?q=${searchTerm}`)
+
+        const { data } = await res
+        setSearchResults(data)
+        console.log(data)
+      }
+
+      searchFetch()
+    }
+  }, [searchTerm])
 
   return (
     <div className="relative bg-gray-600 p-4">
