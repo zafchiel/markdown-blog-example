@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { FaSearch } from "react-icons/fa"
+import SearchResults from "./SearchResult"
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -41,6 +42,8 @@ export default function Search() {
           </form>
         </div>
       </div>
+
+      <SearchResults results={searchResults} />
     </div>
   )
 }
