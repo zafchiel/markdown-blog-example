@@ -7,7 +7,23 @@ export default function handler(req, res) {
 
   if (process.env.NODE_ENV === "production") {
     // Fetch from cache
-    posts = fs.readdirSync(path.join(process.cwd(), "posts"))
+    const files = fs.readdirSync(path.join(process.cwd(), "posts"))
+
+    posts = files.map((filename) => {
+      const slug = filename.replace(".md", "")
+
+      const markdownWithMeta = fs.readFileSync(
+        path.join("posts", filename),
+        "utf-8"
+      )
+
+      const { data: frontmatter } = matter(markdownWithMeta)
+
+      return {
+        slug,
+        frontmatter,
+      }
+    })
   } else {
     const files = fs.readdirSync(path.join("posts"))
 
