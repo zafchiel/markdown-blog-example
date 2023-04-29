@@ -1,4 +1,4 @@
-import fs, { readFileSync } from "fs"
+import fs from "fs"
 import matter from "gray-matter"
 import path from "path"
 
@@ -7,7 +7,7 @@ export default function handler(req, res) {
 
   if (process.env.NODE_ENV === "production") {
     // Fetch from cache
-    posts = readFileSync(path.join(process.cwd(), "posts"))
+    posts = fs.readdirSync(path.join(process.cwd(), "posts"))
   } else {
     const files = fs.readdirSync(path.join("posts"))
 
